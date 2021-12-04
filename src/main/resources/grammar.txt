@@ -1,5 +1,9 @@
-E := T E E;
-E := digit;
-E := T;
-T := digit;
-T := ;
+S := a B;
+S := b A;
+A := a ;
+A := b A A;
+A := a S;
+B := b ;
+B := a B B;
+B := b S;
+

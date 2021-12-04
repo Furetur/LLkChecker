@@ -16,6 +16,7 @@ data class NonTerm(override val name: String): Symbol() {
 
 typealias SymbolString = List<Symbol>
 typealias TermString = List<Term>
+typealias Lang = Set<TermString>
 
 val EPSILON: TermString = emptyList()
 
