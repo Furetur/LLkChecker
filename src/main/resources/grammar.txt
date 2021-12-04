@@ -1,0 +1,5 @@
+E := T E E;
+E := digit;
+E := T;
+T := digit;
+T := ;
