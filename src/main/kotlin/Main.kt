@@ -1,26 +1,36 @@
-import algorithms.NullableTable
-import algorithms.firstTable
-import algorithms.leftRecursiveNonTerms
+import algorithms.*
 import parser.parseGrammar
 import java.io.File
 
 fun main() {
+    val k = 3
     val text = File("src/main/resources/grammar.txt").readText()
-    val grammar = parseGrammar(text)
-    println(grammar)
-    println("Without useless symbols")
-    println(grammar.removeUselessSymbols())
-    println("Nullable: ${NullableTable(grammar).nullableNonTerms}")
-    println("Left recursive nonterms: ${grammar.leftRecursiveNonTerms()}")
+    val grammar = parseGrammar(text).removeUselessSymbols()
+    val nullable = NullableTable(grammar)
 
-    println("k = 1")
-    val firstTable1 = grammar.firstTable(1)
-    for (nonTerm in grammar.allNonTerms) {
-        println("$nonTerm : ${firstTable1.firstOf(nonTerm)}")
+//    println("First")
+//    for (nonTerm in grammar.allNonTerms) {
+//        println("$nonTerm : ${first.firstOf(nonTerm).debugString()}")
+//    }
+
+    val leftRecursiveNonTerms = grammar.leftRecursiveNonTerms(nullable)
+
+    if (leftRecursiveNonTerms.isNotEmpty()) {
+        println("No!")
+        println("Grammar contains left recursive non terminals: $leftRecursiveNonTerms")
+        return
     }
-    println("k = 2")
-    val firstTable = grammar.firstTable(3)
-    for (nonTerm in grammar.allNonTerms) {
-        println("$nonTerm : ${firstTable.firstOf(nonTerm)}")
+
+    val first = grammar.firstTable(k, nullable)
+    println("Calculated first")
+    val sigma = SigmaTable(grammar, first, k)
+    println("Calculated sigma")
+    val rulesThatViolateLL = checkLL(grammar, sigma, first, k)
+
+    if (rulesThatViolateLL != null) {
+        println("No!")
+        println("Here's a pair of problematic rules:\n${rulesThatViolateLL.first}\n${rulesThatViolateLL.second}")
+    } else {
+        println("Yes!")
     }
 }

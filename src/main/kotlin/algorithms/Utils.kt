@@ -16,3 +16,26 @@ fun kProduct(lang1: Lang, lang2: Lang, k: Int): Lang {
 }
 
 fun kProduct(term: Term, lang: Lang, k: Int): Lang = kProduct(setOf(listOf(term)), lang, k)
+
+fun <A, B> cartesianProduct(xs: Iterable<A>, ys: Iterable<B>): Set<Pair<A, B>> {
+    val result = mutableSetOf<Pair<A, B>>()
+    for (x in xs) {
+        for (y in ys) {
+            result.add(Pair(x, y))
+        }
+    }
+    return result
+}
+
+fun <T> List<T>.findAll(value: T): List<Int> {
+    val result = mutableListOf<Int>()
+    for ((index, el) in withIndex()) {
+        if (el == value) {
+            result.add(index)
+        }
+    }
+    return result
+}
+
+fun TermString.debugString() = "<${joinToString(",")}>"
+fun Lang.debugString() = this.map { it.debugString() }.toString()

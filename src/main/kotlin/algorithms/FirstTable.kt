@@ -21,6 +21,8 @@ interface FirstTable {
     } else {
         kProduct(firstOf(symbolString.first()), firstOf(symbolString.drop(1)), k)
     }
+
+    fun firstOf(rule: Rule) = firstOf(rule.value)
 }
 
 abstract class BaseFirstTable(protected val grammar: Grammar, protected val nullableTable: NullableTable) :

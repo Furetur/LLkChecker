@@ -1,9 +1,8 @@
 S := a B;
 S := b A;
-A := a ;
+A := a;
 A := b A A;
 A := a S;
-B := b ;
+B := b;
 B := a B B;
 B := b S;
-

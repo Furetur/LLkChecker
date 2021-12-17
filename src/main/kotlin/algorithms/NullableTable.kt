@@ -13,10 +13,10 @@ class NullableTable(grammar: Grammar) : PointerBasedAlgorithm(grammar) {
         start()
     }
 
-    val nullableNonTerms: Map<NonTerm, Boolean>
-        get() = nullable
+    val nullableNonTerms: List<NonTerm>
+        get() = nullable.keys.toList()
 
-    fun isNullable(nonTerm: NonTerm): Boolean = nullable[nonTerm] ?: error("Nonterm $nonTerm is not in the table")
+    fun isNullable(nonTerm: NonTerm): Boolean = nullable[nonTerm] ?: false
 
     override fun tryAdvancePointer(rule: Rule) {
         val def = rule.def
@@ -29,14 +29,12 @@ class NullableTable(grammar: Grammar) : PointerBasedAlgorithm(grammar) {
         } else {
             // if at terminal
             if (currentSymbol is Term) {
-                nullable[def] = false
                 discardPointer(rule)
             } else { // if at nonterm
                 // if nonterm is nullable
                 if (nullable[currentSymbol] == true) {
                     advancePointer(rule)
                 } else if (nullable[currentSymbol] == false) { // if nonterm is not nullable
-                    nullable[def] = false
                     discardPointer(rule)
                 }
                 // if it is unknown whether nonterm is nullable or not, we just wait
