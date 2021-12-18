@@ -1,0 +1,23 @@
+name: Build Jar and Publih
+
+on:
+  release:
+    types: [created]
+
+jobs:
+  fatJar:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - name: Set up JDK 1.8
+        uses: actions/setup-java@v1
+        with:
+          java-version: 1.8
+      - name: Shadow Jar
+        run: ./gradlew shadowJar
+      - name: Release
+        uses: softprops/action-gh-release@v1
+        with:
+          files: build/libs/llkchecker.jar
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
