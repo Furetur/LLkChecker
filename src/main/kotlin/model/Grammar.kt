@@ -1,5 +1,7 @@
 package model
 
+import java.util.*
+
 // Symbols
 
 sealed class Symbol {
@@ -25,7 +27,6 @@ val EPSILON: TermString = emptyList()
 data class Rule(val def: NonTerm, val value: SymbolString) {
     override fun toString(): String = "$def := ${value.joinToString(" ")}"
 }
-
 data class Grammar(val main: NonTerm, val rules: Map<NonTerm, Set<Rule>>) {
     val allRules = rules.flatMap { it.value }
     val allNonTerms = rules.keys.toList()
@@ -39,7 +40,18 @@ data class Grammar(val main: NonTerm, val rules: Map<NonTerm, Set<Rule>>) {
         }
     }
 
-    fun removeUselessSymbols() = Grammar(main, rules.filter { it.key in allRightNonTerms || it.key == main })
+    fun removeUselessSymbols(): Grammar {
+        val visitedNonTerms = mutableSetOf<NonTerm>()
+        val queue: Queue<NonTerm> = LinkedList<NonTerm>().also { it.add(main) }
+
+        while (queue.isNotEmpty()) {
+            val cur = queue.poll()
+            val neighbourNonTerms = rules[cur]?.flatMap { it.value.filterIsInstance<NonTerm>() }?.toSet() ?: emptySet()
+            neighbourNonTerms.filter { it !in visitedNonTerms }.forEach { neighbourNonTerm -> queue.add(neighbourNonTerm)  }
+            visitedNonTerms.add(cur)
+        }
+        return Grammar(main, rules.filter { it.key in visitedNonTerms })
+    }
 
     override fun toString(): String = "Main nonterminal: $main\n" + allRules.joinToString("\n")
 }
